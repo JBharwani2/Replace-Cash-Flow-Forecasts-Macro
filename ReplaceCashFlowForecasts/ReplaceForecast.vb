@@ -1,7 +1,7 @@
 ﻿Sub ReplaceForecast()
     '
     ' ReplaceForecast Macro
-    ' Created by Jeremy Bharwani on 7/1/21
+    ' Created by Jeremy Bharwani on 7/7/21
     ' (questions- email jcb926@gmail.com)
     '
     ' This macro takes a selection of worksheets and a user input date to update the latest month from a forecast to an actual value. The date is compared
@@ -14,19 +14,18 @@
 
     'VARIABLES -------------------------------------------------------------------------------------------------------------------------------------------------------
     Dim ws As Worksheet
-    Dim checkSheet As Worksheet
     Dim fileDate As String
     Dim year As String
     Dim month As String
     Dim checkDate As String
     Dim checkMonth As String
     Dim checkYear As String
+    Dim previousMonth As String
     Dim row As Integer
     Dim count As Integer
-    Dim bonusRow As Integer
     Dim regexOne As Object
     Set regexOne = New RegExp
-   regexOne.Pattern = "\d{4}"
+    regexOne.Pattern = "\d{4}"
     count = 0
 
     'USER INPUT -------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -61,33 +60,24 @@
             checkDate = checkMonth & checkYear
         Loop Until checkDate = fileDate
 
-        'Update rows with new formulas
-        ws.Range("C" & row).Formula = "='S:\acct\JLS\20" & year & "\" & year & "-CHS\[" & month & "-" & year & "chs.xls]" & ws.Name & "'!" & Right(ws.Range("C" & (row - 1)).Formula, 5)
-
+        'Copies down the formulas from the row above
+        ws.Range("C" & row).Formula = ws.Range("C" & (row - 1)).Formula
         ws.Range("D" & row).Clear()
+        ws.Range("E" & row).Formula = ws.Range("E" & (row - 1)).Formula
+        ws.Range("F" & row).Formula = ws.Range("F" & (row - 1)).Formula
+        ws.Range("G" & row).Formula = ws.Range("G" & (row - 1)).Formula
+        ws.Range("H" & row).Formula = ws.Range("H" & (row - 1)).Formula
+        ws.Range("K" & row).Formula = ws.Range("K" & (row - 1)).Formula
+        ws.Range("L" & row).Formula = ws.Range("L" & (row - 1)).Formula
+        ws.Range("M" & row).Formula = ws.Range("M" & (row - 1)).Formula
+        ws.Range("P" & row).Formula = ws.Range("P" & (row - 1)).Formula
+        ws.Range("V" & row).Formula = ws.Range("V" & (row - 1)).Formula
 
-        ws.Range("E" & row).Formula = "='S:\acct\JLS\20" & year & "\" & year & "-CHS\[" & month & "-" & year & "chs.xls]" & ws.Name & "'!" _
-            & Mid(ws.Range("E" & (row - 1)).Formula, InStr(ws.Range("E" & (row - 1)).Formula, "+") - 5, 5) _
-                & " + 'S:\acct\JLS\20" & year & "\" & year & "-CHS\[" & month & "-" & year & "chs.xls]" & ws.Name & "'!" & Right(ws.Range("E" & (row - 1)).Formula, 5)
-
-        ws.Range("F" & row).Formula = "='S:\acct\JLS\20" & year & "\" & year & "-CHS\[" & month & "-" & year & "chs.xls]" & ws.Name & "'!" & Right(ws.Range("F" & (row - 1)).Formula, 5)
-        ws.Range("G" & row).Formula = "='S:\acct\JLS\20" & year & "\" & year & "-CHS\[" & month & "-" & year & "chs.xls]" & ws.Name & "'!" & Right(ws.Range("G" & (row - 1)).Formula, 5)
-        ws.Range("H" & row).Formula = "='S:\acct\JLS\20" & year & "\" & year & "-CHS\[" & month & "-" & year & "chs.xls]" & ws.Name & "'!" & Right(ws.Range("H" & (row - 1)).Formula, 5)
-        ws.Range("K" & row).Formula = "='S:\acct\JLS\20" & year & "\" & year & "-CHS\[" & month & "-" & year & "chs.xls]" & ws.Name & "'!" & Right(ws.Range("K" & (row - 1)).Formula, 6)
-
-        ws.Range("L" & row).Formula = "='S:\acct\JLS\20" & year & "\" & year & "-CHS\[" & month & "-" & year & "chs.xls]" & ws.Name & "'!" _
-            & Mid(ws.Range("L" & (row - 1)).Formula, InStr(ws.Range("L" & (row - 1)).Formula, "+") - 6, 6) _
-                & " + 'S:\acct\JLS\20" & year & "\" & year & "-CHS\[" & month & "-" & year & "chs.xls]" & ws.Name & "'!" & Right(ws.Range("L" & (row - 1)).Formula, 6)
-
-        ws.Range("M" & row).Formula = "='S:\acct\JLS\20" & year & "\" & year & "-CHS\[" & month & "-" & year & "chs.xls]" & ws.Name & "'!" & Right(ws.Range("M" & (row - 1)).Formula, 6)
-        ws.Range("P" & row).Formula = "='S:\acct\JLS\20" & year & "\" & year & "-CHS\[" & month & "-" & year & "chs.xls]" & ws.Name & "'!" & Right(ws.Range("P" & (row - 1)).Formula, 6)
-
-        ws.Range("V" & row).Formula = "='S:\acct\JLS\20" & year & "\" & year & "-CHS\[" & month & "-" & year & "chs.xls]" & ws.Name & "'!" _
-            & Mid(ws.Range("V" & (row - 1)).Formula, InStr(ws.Range("V" & (row - 1)).Formula, "+") - 6, 6) & " + 'S:\acct\JLS\20" _
-                & year & "\" & year & "-CHS\[" & month & "-" & year & "chs.xls]" & ws.Name & "'!" _
-                    & Mid(Mid(ws.Range("V" & (row - 1)).Formula, InStr(ws.Range("V" & (row - 1)).Formula, "+") + 1), InStr(Mid(ws.Range("V" & (row - 1)).Formula, InStr(ws.Range("V" & (row - 1)).Formula, "+") + 1), "+") - 6, 6) _
-                        & " + 'S:\acct\JLS\20" & year & "\" & year & "-CHS\[" & month & "-" & year & "chs.xls]" & ws.Name & "'!" & Right(ws.Range("V" & (row - 1)).Formula, 6)
-
+        'Updates to new date
+        previousMonth = Mid(ws.Range("C" & (row - 1)).Formula, InStr(ws.Range("C" & (row - 1)).Formula, "[") + 1, 2)
+        ws.Range("C" & row & ":" & "V" & row).Replace What:=previousMonth & "-" & year, Replacement:=month & "-" & year, LookAt:=xlPart,
+            SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False,
+            ReplaceFormat:=False, FormulaVersion:=xlReplaceFormula2
 
         'Changes updated cells to red
         ws.Range("C" & row & "," & "E" & row & "," & "F" & row & "," & "G" & row & "," & "H" & row & "," & "K" & row & "," & "L" & row & "," & "M" & row & "," & "P" & row & "," & "V" & row) _
@@ -102,3 +92,4 @@
     MsgBox Str(count) & " sheets have been successfuly updated."
 
 End Sub
+
