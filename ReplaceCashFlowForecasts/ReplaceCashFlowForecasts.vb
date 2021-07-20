@@ -1,15 +1,16 @@
-﻿Sub ReplaceForecast()
+﻿Sub ReplaceCashFlowForecasts()
     '
-    ' ReplaceForecast Macro
+    ' ReplaceCashFlowForecasts Macro
     ' Created by Jeremy Bharwani on 7/7/21
+    ' Updated by Jeremy Bharwani on 7/19/21
     ' (questions- email jcb926@gmail.com)
     '
     ' This macro takes a selection of worksheets and a user input date to update the latest month from a forecast to an actual value. The date is compared
     ' with each row to find the one which was specified as the input. Then certain columns within that row are updated to a new formula that is linked to the
     ' corresponding month's CHS file. The new data is updated to the color red and left selected to be reviewed.
     '
-    ' Time: 1.2 seconds per worksheet
-    ' References: "Microsoft VBScript Regular Expressions 5.5"
+    ' Time: < 2 seconds per worksheet
+    ' References: none
     '
 
     'VARIABLES -------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -23,28 +24,25 @@
     Dim previousMonth As String
     Dim row As Integer
     Dim count As Integer
-    Dim regexOne As Object
-    Set regexOne = New RegExp
-    regexOne.Pattern = "\d{4}"
     count = 0
 
-    'USER INPUT -------------------------------------------------------------------------------------------------------------------------------------------------------
+    'USER INPUT -------------------------------------------------------------------------------------------------------------------------------------------------------    
     'Gets user input for the month and year of this batch of files
-    fileDate = InputBox("CONFIRM ALL SHEETS ARE SELECTED, then input the month and year in this format: 0521")
+    fileDate = Left(Right(ThisWorkbook.Name, 9), 5)
     month = Left(fileDate, 2)
     year = Right(fileDate, 2)
 
-    If regexOne.Test(fileDate) And Len(fileDate) = 4 Then
-        Application.ScreenUpdating = False 'aviods the visible opening and closing of the new workbooks
-    Else
-        MsgBox "Invalid date entered"
+    'Asks user if they are sure that they want to run the macro with the selected sheets
+    CarryOn = MsgBox("You have selected " & ActiveWindow.SelectedSheets.count & " sheets for the month of " & month & "-" & year &
+        ". Do you want to proceed in updating this month's forecasts to actual data?", vbYesNo, "Macro Run Confirmation")
+
+    If CarryOn = vbNo Then
         End
     End If
 
     'MAIN PROCESS -----------------------------------------------------------------------------------------------------------------------------------------------------
-
-
     'Iterates through each worksheet that was initially selected
+    Application.ScreenUpdating = False 'aviods the visible opening and closing of the new workbooks
     For Each ws In ActiveWindow.SelectedSheets
 
         'Find row of next forecast
@@ -58,7 +56,7 @@
             End If
 
             checkDate = checkMonth & checkYear
-        Loop Until checkDate = fileDate
+        Loop Until checkDate = month & year
 
         'Copies down the formulas from the row above
         ws.Range("C" & row).Formula = ws.Range("C" & (row - 1)).Formula
@@ -73,7 +71,7 @@
         ws.Range("P" & row).Formula = ws.Range("P" & (row - 1)).Formula
         ws.Range("V" & row).Formula = ws.Range("V" & (row - 1)).Formula
 
-        'Updates to new date
+        'Updates formula to have a new date
         previousMonth = Mid(ws.Range("C" & (row - 1)).Formula, InStr(ws.Range("C" & (row - 1)).Formula, "[") + 1, 2)
         ws.Range("C" & row & ":" & "V" & row).Replace What:=previousMonth & "-" & year, Replacement:=month & "-" & year, LookAt:=xlPart,
             SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False,
@@ -92,4 +90,5 @@
     MsgBox Str(count) & " sheets have been successfuly updated."
 
 End Sub
+
 

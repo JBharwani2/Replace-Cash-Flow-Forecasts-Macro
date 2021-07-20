@@ -181,14 +181,14 @@
   -->
   <ItemGroup>
     <AppDesigner Include="My Project\" />
-    <Compile Include="ReplaceForecast.vb">
+    <Compile Include="ReplaceCashFlowForecasts.vb">
       <SubType>Code</SubType>
     </Compile>
-    <None Include="ReplaceForecast.Designer.xml">
-      <DependentUpon>ReplaceForecast.vb</DependentUpon>
+    <None Include="ReplaceCashFlowForecasts.Designer.xml">
+      <DependentUpon>ReplaceCashFlowForecasts.vb</DependentUpon>
     </None>
-    <Compile Include="ReplaceForecast.Designer.vb">
-      <DependentUpon>ReplaceForecast.Designer.xml</DependentUpon>
+    <Compile Include="ReplaceCashFlowForecasts.Designer.vb">
+      <DependentUpon>ReplaceCashFlowForecasts.Designer.xml</DependentUpon>
     </Compile>
     <Compile Include="My Project\AssemblyInfo.vb" />
     <EmbeddedResource Include="My Project\Resources.resx">
@@ -235,7 +235,7 @@
       <FlavorProperties GUID="{BAA0C2D2-18E2-41B9-852F-F413020CAA33}">
         <ProjectProperties HostName="Excel" HostPackage="{29A7B9D7-A7F1-4328-8EF0-6B2D1A56B2C1}" OfficeVersion="15.0" VstxVersion="4.0" ApplicationType="Excel" Language="vb" TemplatesPath="" DebugInfoExeName="#Software\Microsoft\Office\16.0\Excel\InstallRoot\Path#excel.exe" DebugInfoCommandLine="/x" AddItemTemplatesGuid="{DCFE8D25-4715-4C33-9EAB-A34A9EBC9544}" />
         <Host Name="Excel" IconIndex="0">
-          <HostItem Name="ThisAddIn" Code="ReplaceForecast.vb" CanonicalName="AddIn" CanActivate="false" IconIndex="1" Blueprint="ReplaceForecast.Designer.xml" GeneratedCode="ReplaceForecast.Designer.vb" />
+          <HostItem Name="ThisAddIn" Code="ReplaceCashFlowForecasts.vb" CanonicalName="AddIn" CanActivate="false" IconIndex="1" Blueprint="ReplaceCashFlowForecasts.Designer.xml" GeneratedCode="ReplaceCashFlowForecasts.Designer.vb" />
         </Host>
       </FlavorProperties>
     </VisualStudio>
