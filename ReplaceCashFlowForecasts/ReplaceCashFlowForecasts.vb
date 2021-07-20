@@ -55,11 +55,12 @@
     End If
 
     'COPY & UPDATE ---------------------------------------------------------------------------------------------------------------------------------------------------
-    'Iterates through each worksheet that was initially selected
-    Application.ScreenUpdating = False 'aviods the visible opening and closing of the new workbooks
+    Application.ScreenUpdating = False
+
+    'Iterates through each worksheet that was selected
     For Each ws In ActiveWindow.SelectedSheets
 
-        'Find row of next forecast
+        'Find row of next forecast by matching the date of the row to the date in the workbook name
         row = 10
         Do
             row = row + 1
@@ -89,7 +90,6 @@
     Next ws
 
     'COMPLETION MESSSAGE ---------------------------------------------------------------------------------------------------------------------------------------------
-    'Completion message
     Application.ScreenUpdating = True
     MsgBox Str(count) & " sheets have been successfuly updated."
 
