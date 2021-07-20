@@ -9,8 +9,8 @@
     ' with each row to find the one which was specified as the input. Then certain columns within that row are updated to a new formula that is linked to the
     ' corresponding month's CHS file. The new data is updated to the color red and left selected to be reviewed.
     '
-    ' Time: < 2 seconds per worksheet
-    ' References: none
+    ' Time: > 2 seconds per worksheet
+    ' References: "mscorlib.dll"
     '
 
     'VARIABLES -------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -26,7 +26,21 @@
     Dim count As Integer
     count = 0
 
-    'USER INPUT -------------------------------------------------------------------------------------------------------------------------------------------------------    
+    Dim columns As ArrayList
+    Set columns = New ArrayList
+    columns.Add "C"
+    columns.Add "E"
+    columns.Add "F"
+    columns.Add "G"
+    columns.Add "H"
+    columns.Add "K"
+    columns.Add "L"
+    columns.Add "M"
+    columns.Add "P"
+    columns.Add "V"
+
+
+'DATE SETUP ------------------------------------------------------------------------------------------------------------------------------------------------------
     'Gets user input for the month and year of this batch of files
     fileDate = Left(Right(ThisWorkbook.Name, 9), 5)
     month = Left(fileDate, 2)
@@ -40,7 +54,7 @@
         End
     End If
 
-    'MAIN PROCESS -----------------------------------------------------------------------------------------------------------------------------------------------------
+    'COPY & UPDATE ---------------------------------------------------------------------------------------------------------------------------------------------------
     'Iterates through each worksheet that was initially selected
     Application.ScreenUpdating = False 'aviods the visible opening and closing of the new workbooks
     For Each ws In ActiveWindow.SelectedSheets
@@ -58,37 +72,25 @@
             checkDate = checkMonth & checkYear
         Loop Until checkDate = month & year
 
-        'Copies down the formulas from the row above
-        ws.Range("C" & row).Formula = ws.Range("C" & (row - 1)).Formula
+        'Copies down the formulas from the row above and changes the font color to red
+        For Each Column In columns
+            ws.Range(Column & row).Formula = ws.Range(Column & (row - 1)).Formula
+            ws.Range(Column & row).Font.Color = RGB(255, 0, 0)
+        Next
         ws.Range("D" & row).Clear()
-        ws.Range("E" & row).Formula = ws.Range("E" & (row - 1)).Formula
-        ws.Range("F" & row).Formula = ws.Range("F" & (row - 1)).Formula
-        ws.Range("G" & row).Formula = ws.Range("G" & (row - 1)).Formula
-        ws.Range("H" & row).Formula = ws.Range("H" & (row - 1)).Formula
-        ws.Range("K" & row).Formula = ws.Range("K" & (row - 1)).Formula
-        ws.Range("L" & row).Formula = ws.Range("L" & (row - 1)).Formula
-        ws.Range("M" & row).Formula = ws.Range("M" & (row - 1)).Formula
-        ws.Range("P" & row).Formula = ws.Range("P" & (row - 1)).Formula
-        ws.Range("V" & row).Formula = ws.Range("V" & (row - 1)).Formula
 
         'Updates formula to have a new date
         previousMonth = Mid(ws.Range("C" & (row - 1)).Formula, InStr(ws.Range("C" & (row - 1)).Formula, "[") + 1, 2)
         ws.Range("C" & row & ":" & "V" & row).Replace What:=previousMonth & "-" & year, Replacement:=month & "-" & year, LookAt:=xlPart,
-            SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False,
-            ReplaceFormat:=False, FormulaVersion:=xlReplaceFormula2
-
-        'Changes updated cells to red
-        ws.Range("C" & row & "," & "E" & row & "," & "F" & row & "," & "G" & row & "," & "H" & row & "," & "K" & row & "," & "L" & row & "," & "M" & row & "," & "P" & row & "," & "V" & row) _
-            .Font.Color = RGB(255, 0, 0)
+            SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False, FormulaVersion:=xlReplaceFormula2
 
         'Count number of updated sheets
         count = count + 1
     Next ws
 
+    'COMPLETION MESSSAGE ---------------------------------------------------------------------------------------------------------------------------------------------
     'Completion message
     Application.ScreenUpdating = True
     MsgBox Str(count) & " sheets have been successfuly updated."
 
 End Sub
-
-
