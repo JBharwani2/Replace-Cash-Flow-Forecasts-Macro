@@ -181,6 +181,7 @@
   -->
   <ItemGroup>
     <AppDesigner Include="My Project\" />
+    <Compile Include="GoalSeekEndBal.vb" />
     <Compile Include="ReplaceCashFlowForecasts.vb">
       <SubType>Code</SubType>
     </Compile>
